@@ -23,17 +23,60 @@
         p {
             font-size: 1.2rem;
             color: #ccc;
+            margin-bottom: 1.5rem;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .lang-switch button {
+            background: #222;
+            color: #eee;
+            border: 1px solid #444;
+            padding: 0.3rem 0.8rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .lang-switch button.active {
+            background: #00c853;
+            border-color: #00c853;
         }
 
         .game {
             margin-top: 2rem;
         }
 
-        .game img {
-            width: 200px;
-            border-radius: 12px;
+        .game img.icon {
+            width: 100px;
+            border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             margin-bottom: 1rem;
+        }
+
+        .game img.cover {
+            width: 100%;
+            max-width: 700px;
+            border-radius: 16px;
+            margin: 2rem 0;
+        }
+
+        .screenshots {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .screenshots img {
+            width: 150px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
 
         .game a {
@@ -60,21 +103,73 @@
 </head>
 
 <body>
-    <h1>Fun Grind Games</h1>
-    <p>Привет! Я — инди-разработчик, создающий игры в одиночку с любовью к геймдеву 🎮</p>
+    <div class="lang-switch">
+        <button id="btn-en" class="active">EN</button>
+        <button id="btn-ru">RU</button>
+    </div>
+
+    <h1 id="title">Fun Grind Games</h1>
+    <p id="intro">Hi! I'm a solo game developer creating fun games with passion 🎮</p>
 
     <div class="game">
-        <img src="https://play-lh.googleusercontent.com/iwFiBYYgAATGLvZqNLYGHfVu8dKp7Om5ti8OECsvu9nBWZErM1QWfRHD6XMeUVuCOe0=w240-h480-rw"
-            alt="Office Tower">
-        <h2>🗼 Office Tower</h2>
-        <p>Пробеги по городу, собирай монеты и строй небоскрёб, нанимая офисных работников!</p>
-        <a href="https://play.google.com/store/apps/details?id=com.FunGrindGames.OfficeTower" target="_blank">Скачать в
-            Google Play</a>
+        <img class="icon" src="images/appIcon.png" alt="Game Icon">
+        <h2 id="game-title">🏢 Office Tower</h2>
+        <p id="game-desc">
+            Dash through the city, collect coins, and build your own office tower by hiring workers!
+        </p>
+
+        <div class="screenshots">
+            <img src="images/1.png" alt="Screenshot 1">
+            <img src="images/2.png" alt="Screenshot 2">
+            <img src="images/3.png" alt="Screenshot 3">
+            <img src="images/4.png" alt="Screenshot 4">
+            <img src="images/5.png" alt="Screenshot 5">
+            <img src="images/6.png" alt="Screenshot 6">
+        </div>
+
+        <a href="https://play.google.com/store/apps/details?id=com.FunGrindGames.OfficeTower" target="_blank"
+            id="play-button">Get it on Google Play</a>
     </div>
 
     <footer>
-        © 2025 Fun Grind Games. Сделано с душой ♥
+        © 2025 Fun Grind Games. Made with ❤️
     </footer>
+
+    <script>
+        const langData = {
+            en: {
+                title: "Fun Grind Games",
+                intro: "Hi! I'm a solo game developer creating fun games with passion 🎮",
+                gameTitle: "🏢 Office Tower",
+                gameDesc: "Dash through the city, collect coins, and build your own office tower by hiring workers!",
+                playButton: "Get it on Google Play"
+            },
+            ru: {
+                title: "Fun Grind Games",
+                intro: "Привет! Я инди-разработчик, создающий игры с любовью 🎮",
+                gameTitle: "🏢 Office Tower",
+                gameDesc: "Беги по городу, собирай монеты и строй офисную башню, нанимая сотрудников!",
+                playButton: "Скачать в Google Play"
+            }
+        };
+
+        const btnEn = document.getElementById("btn-en");
+        const btnRu = document.getElementById("btn-ru");
+
+        const setLang = (lang) => {
+            document.getElementById("title").textContent = langData[lang].title;
+            document.getElementById("intro").textContent = langData[lang].intro;
+            document.getElementById("game-title").textContent = langData[lang].gameTitle;
+            document.getElementById("game-desc").textContent = langData[lang].gameDesc;
+            document.getElementById("play-button").textContent = langData[lang].playButton;
+
+            btnEn.classList.toggle("active", lang === "en");
+            btnRu.classList.toggle("active", lang === "ru");
+        };
+
+        btnEn.onclick = () => setLang("en");
+        btnRu.onclick = () => setLang("ru");
+    </script>
 </body>
 
 </html>
