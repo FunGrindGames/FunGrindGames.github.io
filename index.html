@@ -6,8 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fun Grind Games</title>
     <style>
+        /* Make the page fill the viewport so footer can stick to bottom */
+        html,
         body {
+            height: 100%;
             margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
             font-family: "Segoe UI", sans-serif;
             background: #111;
             color: #eee;
@@ -77,27 +86,86 @@
             width: 150px;
             border-radius: 12px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
         }
 
-        .game a {
+        .play-badge {
             display: inline-block;
-            text-decoration: none;
-            color: #fff;
-            background: #00c853;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background 0.3s;
+            margin-top: 1rem;
         }
 
-        .game a:hover {
-            background: #00b34f;
+        .play-badge img {
+            height: 60px;
         }
 
+        /* Footer at bottom */
         footer {
-            margin-top: 3rem;
+            margin-top: auto;
             font-size: 0.9rem;
             color: #666;
+        }
+
+        /* Simple modal for enlarged screenshots */
+        #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #imageContainer {
+            position: relative;
+            display: inline-block;
+            max-width: 80%;
+        }
+
+        #modalImg {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+        }
+
+        #closeModal {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #prevArrow,
+        #nextArrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #prevArrow {
+            left: -50px;
+        }
+
+        #nextArrow {
+            right: -50px;
         }
     </style>
 </head>
@@ -128,12 +196,25 @@
         </div>
 
         <a href="https://play.google.com/store/apps/details?id=com.FunGrindGames.OfficeTower" target="_blank"
-            id="play-button">Get it on Google Play</a>
+            class="play-badge">
+            <img id="play-button-img" src="images/GetItOnGooglePlay_Badge_Web_color_English.png"
+                alt="Get it on Google Play">
+        </a>
     </div>
 
     <footer>
         © 2025 Fun Grind Games. Made with ❤️
     </footer>
+
+    <!-- Modal for enlarged screenshots -->
+    <div id="imageModal">
+        <span id="closeModal">&times;</span>
+        <div id="imageContainer">
+            <span id="prevArrow">&#x2770;</span>
+            <img id="modalImg" src="" alt="Enlarged Screenshot" />
+            <span id="nextArrow">&#x2771;</span>
+        </div>
+    </div>
 
     <script>
         const langData = {
@@ -142,14 +223,14 @@
                 intro: "Hi! I'm a solo game developer creating fun games with passion 🎮",
                 gameTitle: "🏢 Office Tower",
                 gameDesc: "Dash through the city, collect coins, and build your own office tower by hiring workers!",
-                playButton: "Get it on Google Play"
+                playButtonImg: "images/GetItOnGooglePlay_Badge_Web_color_English.png"
             },
             ru: {
                 title: "Fun Grind Games",
                 intro: "Привет! Я инди-разработчик, создающий игры с любовью 🎮",
                 gameTitle: "🏢 Office Tower",
                 gameDesc: "Беги по городу, собирай монеты и строй офисную башню, нанимая сотрудников!",
-                playButton: "Скачать в Google Play"
+                playButtonImg: "images/GetItOnGooglePlay_Badge_Web_color_Russian.png"
             }
         };
 
@@ -161,7 +242,7 @@
             document.getElementById("intro").textContent = langData[lang].intro;
             document.getElementById("game-title").textContent = langData[lang].gameTitle;
             document.getElementById("game-desc").textContent = langData[lang].gameDesc;
-            document.getElementById("play-button").textContent = langData[lang].playButton;
+            document.getElementById("play-button-img").src = langData[lang].playButtonImg;
 
             btnEn.classList.toggle("active", lang === "en");
             btnRu.classList.toggle("active", lang === "ru");
@@ -169,6 +250,41 @@
 
         btnEn.onclick = () => setLang("en");
         btnRu.onclick = () => setLang("ru");
+
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImg");
+        const closeModal = document.getElementById("closeModal");
+        const prevArrow = document.getElementById("prevArrow");
+        const nextArrow = document.getElementById("nextArrow");
+
+        const screenshots = [...document.querySelectorAll(".screenshots img")];
+        let currentIndex = 0;
+
+        // Open modal on screenshot click
+        screenshots.forEach((img, index) => {
+            img.addEventListener("click", () => {
+                currentIndex = index;
+                modalImg.src = img.src;
+                modal.style.display = "flex";
+            });
+        });
+
+        // Close modal
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+        // Show previous screenshot
+        prevArrow.addEventListener("click", () => {
+            currentIndex = (currentIndex - 1 + screenshots.length) % screenshots.length;
+            modalImg.src = screenshots[currentIndex].src;
+        });
+
+        // Show next screenshot
+        nextArrow.addEventListener("click", () => {
+            currentIndex = (currentIndex + 1) % screenshots.length;
+            modalImg.src = screenshots[currentIndex].src;
+        });
     </script>
 </body>
 
